@@ -108,7 +108,7 @@ class Settings(object):
 
     @encoding.setter
     def encoding(self, value: str):
-        self._encoding = value
+        self._encoding = None if value == "" else value
         self.save()
 
 
