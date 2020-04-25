@@ -200,7 +200,7 @@ class InputSettings(object):
             print('Допустимы только: utf8 или пустое значение')
             cls.input_encoding()
 
-        cls.settings.ecnoding = encoding
+        cls.settings.encoding = encoding
 
     @classmethod
     def input_setting(cls):
