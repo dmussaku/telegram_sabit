@@ -40,7 +40,7 @@ class TelegramParser(object):
             )
 
         messages = list(filter(
-            lambda x: from_datetime < datetime.fromisoformat(x['date']) <= to_datetime,
+            lambda x: from_datetime < datetime.fromisoformat(x['date']).date() <= to_datetime,
             chat['messages']
         ))
 
@@ -103,7 +103,6 @@ class TelegramParser(object):
                     'count': len(ids),
                     'keywords': accumulated
                 }
-
         return result
 
     def get_accumulated_statistics(self,
@@ -122,18 +121,19 @@ class TelegramParser(object):
 class StatisticsWriter(object):
 
     def create_csv_from_result(accumulated_result: dict,
-                               keywords: list):
+                               keywords: list,
+                               encoding: str=None):
         # expect accumulated result of type
         # {<username1>: {<date1>: {'count': 100, 'keywords': {'keyword1': 30}}}}
         file_path = os.path.join(os.getcwd(), 'statistics.csv')
-        with open(file_path, 'w', encoding='utf8', newline='') as csvfile:
+        with open(file_path, 'w', encoding=encoding, newline='') as csvfile:
             fieldnames = ['date', 'user', 'count'] + keywords
-            writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
-            writer.writeheader()
+            writer = csv.DictWriter(csvfile, delimiter=";", fieldnames=fieldnames)
+            # writer.writeheader()
             for user, data_per_date in accumulated_result.items():
                 for date, result in data_per_date.items():
                     row = result['keywords']
                     row['count'] = result['count']
                     row['date'] = date.strftime('%d.%m.%Y')
                     row['user'] = user
-                writer.writerow(row)
+                    writer.writerow(row)

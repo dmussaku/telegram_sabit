@@ -18,6 +18,7 @@ class Settings(object):
             self._keywords = None
             self._date_from = None
             self._date_to = None
+            self.encoding = None
             self.save()
         else:
             with open(settings_file_path, 'r') as settings_file:
@@ -26,10 +27,11 @@ class Settings(object):
             self._chat_name = settings_dict['chat_name']
             self._prefix = settings_dict['prefix']
             self._keywords = settings_dict['keywords']
-            self._date_from = (datetime.strptime(settings_dict['date_from'], '%d.%m.%Y')
+            self._date_from = (datetime.strptime(settings_dict['date_from'], '%d.%m.%Y').date()
                                if settings_dict['date_from'] else None)
-            self._date_to = (datetime.strptime(settings_dict['date_to'], '%d.%m.%Y')
+            self._date_to = (datetime.strptime(settings_dict['date_to'], '%d.%m.%Y').date()
                              if settings_dict['date_to'] else None)
+            self.encoding = settings_dict['encoding']
 
     def save(self):
         with open(settings_file_path, 'w') as settings_file:
@@ -39,6 +41,7 @@ class Settings(object):
                 'keywords': self.keywords,
                 'date_from': self.date_from.strftime('%d.%m.%Y') if self.date_from else None,
                 'date_to': self.date_to.strftime('%d.%m.%Y') if self.date_to else None,
+                'encoding': self.encoding if self.encoding else None,
             }))
 
     @property
@@ -49,6 +52,7 @@ class Settings(object):
             ', '.join(self.keywords) if self.keywords else "",
             self.date_from.strftime('%d.%m.%Y') if self.date_from else "",
             self.date_to.strftime('%d.%m.%Y') if self.date_to else "",
+            self.encoding if self.encoding else "",
         ]
 
     @property
@@ -86,7 +90,7 @@ class Settings(object):
 
     @date_from.setter
     def date_from(self, value: str):
-        self._date_from = datetime.strptime(value, '%d.%m.%Y')
+        self._date_from = datetime.strptime(value, '%d.%m.%Y').date()
         self.save()
 
     @property
@@ -95,35 +99,46 @@ class Settings(object):
 
     @date_to.setter
     def date_to(self, value: str):
-        self._date_to = datetime.strptime(value, '%d.%m.%Y')
+        self._date_to = datetime.strptime(value, '%d.%m.%Y').date()
+        self.save()
+
+    @property
+    def encoding(self):
+        return self._encoding
+
+    @encoding.setter
+    def encoding(self, value: str):
+        self._encoding = value
         self.save()
 
 
 class InputSettings(object):
     settings = Settings()
     chat_name_num = 1
-    chat_name_label = 'Название Чата:'
+    chat_name_label = 'Название Чата: '
     prefix_num = 2
-    prefix_label = 'Префикс:'
+    prefix_label = 'Префикс: '
     keywords_num = 3
-    keywords_label = 'Термины (ввод через запятую):'
+    keywords_label = 'Термины (ввод через запятую): '
     date_from_num = 4
-    date_from_label = 'Дата начала (дд.мм.гггг):'
+    date_from_label = 'Дата начала (дд.мм.гггг): '
     date_to_num = 5
-    date_to_label = 'Дата окончания (дд.мм.гггг):'
+    date_to_label = 'Дата окончания (дд.мм.гггг): '
+    encoding_num = 6
+    encoding_label = 'Кодировка файла (utf8 или пустое значение): '
 
     @classmethod
     def print_settings(cls):
         print("")
         annotations = zip(
             (cls.chat_name_num, cls.prefix_num, cls.keywords_num,
-             cls.date_from_num, cls.date_to_num),
+             cls.date_from_num, cls.date_to_num, cls.encoding_num),
             (cls.chat_name_label, cls.prefix_label, cls.keywords_label,
-             cls.date_from_label, cls.date_to_label),
+             cls.date_from_label, cls.date_to_label, cls.encoding_label),
             cls.settings.as_string_list,
         )
         for i, label, setting in annotations:
-            print ('{0}) {1} \033[1m {2} \033[0m'.format(i, label, setting))
+            print ('{0}) {1}\033[1m {2} \033[0m'.format(i, label, setting))
 
     @classmethod
     def input_chat_name(cls):
@@ -179,19 +194,31 @@ class InputSettings(object):
             cls.input_date_to()
 
     @classmethod
+    def input_encoding(cls):
+        encoding = input(cls.encoding_label).strip()
+        if encoding not in ("utf8", ""):
+            print('\033[91mДопустимы только: utf8 или пустое значение\033[0m')
+            cls.input_encoding()
+
+        cls.settings.ecnoding = encoding
+
+    @classmethod
     def input_setting(cls):
         print (
             """\n"""
-            """\033[92mНажмите enter для запуска, """
-            """list для вывода текущих настроек, """
+            """\033[92mНажмите enter для запуска\n"""
+            """введите list для показа текущих настроек, """
             """или номер параметра для изменения\033[0m"""
         )
         value = input()
 
         if value == "":
-            if not all(cls.settings.as_string_list):
+            if not all((cls.settings.chat_name,
+                        cls.settings.prefix,
+                        cls.settings.keywords,
+                        cls.settings.date_from,
+                        cls.settings.date_to)):
                 print("\033[91m Не все настройки были введены \033[0m")
-                cls.print_settings()
                 cls.input_setting()
             return
         elif value == "list":
@@ -206,6 +233,8 @@ class InputSettings(object):
             cls.input_date_from()
         elif value == '5':
             cls.input_date_to()
+        elif value == '6':
+            cls.input_encoding()
         else:
             print("\033[91m Неккоректный ввод \033[0m")
 

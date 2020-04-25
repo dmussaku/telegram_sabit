@@ -17,6 +17,7 @@ if __name__ == '__main__':
         input("Нажмите enter для выхода\n")
     else:
         try:
+            InputSettings.print_settings()
             InputSettings.input_setting()
             telegram_parser = TelegramParser(telegram_filepath)
             accumulated_statistics = telegram_parser.get_accumulated_statistics(
@@ -28,7 +29,8 @@ if __name__ == '__main__':
             )
             StatisticsWriter.create_csv_from_result(
                 accumulated_statistics,
-                InputSettings.settings.keywords
+                InputSettings.settings.keywords,
+                InputSettings.settings.encoding,
             )
 
             print("Файл statistics.csv был создан в текущей дериктории")
