@@ -11,8 +11,8 @@ telegram_filepath = os.path.join(os.getcwd(), 'result.json')
 if __name__ == '__main__':
     if not os.path.exists(telegram_filepath):
         print(
-            "\033[91m Файл result.json не найден \n"
-            "Удостоверьтесь что export telegram чата находится в той же директории что и этот скрипт.\033[0m"
+            "Файл result.json не найден \n"
+            "Удостоверьтесь что export telegram чата находится в той же директории что и этот скрипт."
         )
         input("Нажмите enter для выхода\n")
     else:

@@ -36,7 +36,7 @@ class TelegramParser(object):
         )
         if not chat:
             raise Exception(
-                "\033[91mЧат с названием {} не найден\033[0m".format(chat_name)
+                "Чат с названием {} не найден".format(chat_name)
             )
 
         messages = list(filter(
@@ -46,7 +46,7 @@ class TelegramParser(object):
 
         if not messages:
             raise Exception(
-                "\033[91mНет сообщений за текущий период: {:%d.%m.%Y} - {:%d.%m.%Y}\033[0m".format(
+                "Нет сообщений за текущий период: {:%d.%m.%Y} - {:%d.%m.%Y}".format(
                     from_datetime, to_datetime
                 )
             )

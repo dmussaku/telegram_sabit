@@ -138,13 +138,13 @@ class InputSettings(object):
             cls.settings.as_string_list,
         )
         for i, label, setting in annotations:
-            print ('{0}) {1}\033[1m {2} \033[0m'.format(i, label, setting))
+            print ('{0}) {1} {2} '.format(i, label, setting))
 
     @classmethod
     def input_chat_name(cls):
         chat_name = input(cls.chat_name_label).strip()
         if chat_name in (None, ""):
-            print('\033[91m Поле не должно быть пустым \033[0m')
+            print('Поле не должно быть пустым ')
             cls.input_chat_name()
 
         cls.settings.chat_name = chat_name
@@ -153,7 +153,7 @@ class InputSettings(object):
     def input_prefix(cls):
         prefix = input(cls.prefix_label).strip()
         if prefix in (None, ""):
-            print('\033[91m Поле не должно быть пустым \033[0m')
+            print('Поле не должно быть пустым ')
             cls.input_prefix()
 
         cls.settings.prefix = prefix
@@ -162,7 +162,7 @@ class InputSettings(object):
     def input_keywords(cls):
         keywords = input(cls.keywords_label).strip()
         if keywords in (None, ""):
-            print('\033[91m Поле не должно быть пустым \033[0m')
+            print('Поле не должно быть пустым ')
             cls.input_keywords()
 
         cls.settings.keywords = keywords
@@ -171,33 +171,33 @@ class InputSettings(object):
     def input_date_from(cls):
         date_from = input(cls.date_from_label).strip()
         if date_from in (None, ""):
-            print('\033[91m Поле не должно быть пустым \033[0m')
+            print('Поле не должно быть пустым ')
             cls.input_date_from()
 
         try:
             cls.settings.date_from = date_from
         except ValueError:
-            print('\033[91m Неверный формат \033[0m')
+            print('Неверный формат ')
             cls.input_date_from()
 
     @classmethod
     def input_date_to(cls):
         date_to = input(cls.date_to_label).strip()
         if date_to in (None, ""):
-            print('\033[91m Поле не должно быть пустым \033[0m')
+            print('Поле не должно быть пустым ')
             cls.input_date_to()
 
         try:
             cls.settings.date_to = date_to
         except ValueError:
-            print('\033[91m Неверный формат \033[0m')
+            print('Неверный формат ')
             cls.input_date_to()
 
     @classmethod
     def input_encoding(cls):
         encoding = input(cls.encoding_label).strip()
         if encoding not in ("utf8", ""):
-            print('\033[91mДопустимы только: utf8 или пустое значение\033[0m')
+            print('Допустимы только: utf8 или пустое значение')
             cls.input_encoding()
 
         cls.settings.ecnoding = encoding
@@ -206,9 +206,9 @@ class InputSettings(object):
     def input_setting(cls):
         print (
             """\n"""
-            """\033[92mНажмите enter для запуска\n"""
+            """Нажмите enter для запуска\n"""
             """введите list для показа текущих настроек, """
-            """или номер параметра для изменения\033[0m"""
+            """или номер параметра для изменения"""
         )
         value = input()
 
@@ -218,7 +218,7 @@ class InputSettings(object):
                         cls.settings.keywords,
                         cls.settings.date_from,
                         cls.settings.date_to)):
-                print("\033[91m Не все настройки были введены \033[0m")
+                print(" Не все настройки были введены ")
                 cls.input_setting()
             return
         elif value == "list":
@@ -236,6 +236,6 @@ class InputSettings(object):
         elif value == '6':
             cls.input_encoding()
         else:
-            print("\033[91m Неккоректный ввод \033[0m")
+            print(" Неккоректный ввод ")
 
         cls.input_setting()
