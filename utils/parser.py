@@ -40,7 +40,7 @@ class TelegramParser(object):
             )
 
         messages = list(filter(
-            lambda x: from_datetime < datetime.fromisoformat(x['date']).date() <= to_datetime,
+            lambda x: from_datetime <= datetime.fromisoformat(x['date']).date() <= to_datetime,
             chat['messages']
         ))
 
