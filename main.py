@@ -6,6 +6,10 @@ from utils.parser import TelegramParser, StatisticsWriter
 
 
 telegram_filepath = os.path.join(os.getcwd(), 'result.json')
+settings_file_path = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)),
+    'settings.json'
+)
 
 
 if __name__ == '__main__':
@@ -17,20 +21,21 @@ if __name__ == '__main__':
         input("Нажмите enter для выхода\n")
     else:
         try:
-            InputSettings.print_settings()
-            InputSettings.input_setting()
+            input_settings = InputSettings(settings_file_path)
+            input_settings.print_settings()
+            input_settings.input_setting()
             telegram_parser = TelegramParser(telegram_filepath)
             accumulated_statistics = telegram_parser.get_accumulated_statistics(
-                InputSettings.settings.chat_name,
-                InputSettings.settings.prefix,
-                InputSettings.settings.keywords,
-                InputSettings.settings.date_from,
-                InputSettings.settings.date_to,
+                input_settings.settings.chat_name,
+                input_settings.settings.prefix,
+                input_settings.settings.keywords,
+                input_settings.settings.date_from,
+                input_settings.settings.date_to,
             )
             StatisticsWriter.create_csv_from_result(
                 accumulated_statistics,
-                InputSettings.settings.keywords,
-                InputSettings.settings.encoding,
+                input_settings.settings.keywords,
+                input_settings.settings.encoding,
             )
 
             print("Файл statistics.csv был создан в текущей дериктории")
