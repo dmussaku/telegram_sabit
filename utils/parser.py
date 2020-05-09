@@ -7,8 +7,7 @@ from datetime import datetime
 def is_a_user_text_message(obj):
     if (obj['type'] == 'message' and
             'from' in obj and
-            'text' in obj and
-            type(obj['text']) == str):
+            'text' in obj):
         return True
     return False
 
@@ -54,7 +53,19 @@ class TelegramParser(object):
         return messages
 
     @staticmethod
-    def get_message_statistics(messages: list, keywords: list, prefix: str):
+    def get_message_text(message_struct: dict):
+        message_text = message_struct['text']
+        if type(message_text) in (str, bytes):
+            pass
+        elif type(message_text) == list:
+            message_text = message_text[0]
+        else:
+            message_text = ""
+
+        return message_text.lower().strip()
+
+    @classmethod
+    def get_message_statistics(cls, messages: list, keywords: list, prefix: str):
         # {<username1>: {<date1>: [1, 2, 3], <date2>: [4,5]}}
         user_date_message_ids = {}
 
@@ -62,8 +73,8 @@ class TelegramParser(object):
         main_messages_ids = []
 
         for message in filter(is_a_user_text_message, messages):
-            message_text = message['text']
-            if message_text.lower().strip().startswith(prefix.lower()):
+            message_text = cls.get_message_text(message)
+            if message_text.startswith(prefix.lower()):
                 username = message['from']
                 date = datetime.fromisoformat(message['date']).date()
                 message_id = message['id']
