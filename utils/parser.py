@@ -24,19 +24,9 @@ class TelegramParser(object):
 
     @staticmethod
     def get_chat_messages(contents: dict,
-                          chat_name: str,
                           from_datetime: datetime,
                           to_datetime: datetime):
-        chat = next(
-            filter(
-                lambda x: x['name'] == chat_name,
-                contents['chats']['list']
-            ), None
-        )
-        if not chat:
-            raise Exception(
-                "Чат с названием {} не найден".format(chat_name)
-            )
+        chat = contents
 
         messages = list(filter(
             lambda x: from_datetime <= datetime.fromisoformat(x['date']).date() <= to_datetime,
@@ -117,13 +107,12 @@ class TelegramParser(object):
         return result
 
     def get_accumulated_statistics(self,
-                                   chat_name: str,
                                    prefix: str,
                                    keywords: str,
                                    date_from: datetime,
                                    date_to: datetime):
         file_contents = self.get_file_contents()
-        chat_messages = self.get_chat_messages(file_contents, chat_name, date_from, date_to)
+        chat_messages = self.get_chat_messages(file_contents, date_from, date_to)
         statistic = self.get_message_statistics(chat_messages, keywords, prefix)
 
         return statistic

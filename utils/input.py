@@ -8,7 +8,6 @@ class Settings(object):
     def __init__(self, settings_file_path):
         self.settings_file_path = settings_file_path
         if not os.path.exists(settings_file_path):
-            self._chat_name = None
             self._prefix = None
             self._keywords = None
             self._date_from = None
@@ -19,7 +18,6 @@ class Settings(object):
             with open(settings_file_path, 'r') as settings_file:
                 settings_dict = json.loads(settings_file.read())
 
-            self._chat_name = settings_dict['chat_name']
             self._prefix = settings_dict['prefix']
             self._keywords = settings_dict['keywords']
             self._date_from = (datetime.strptime(settings_dict['date_from'], '%d.%m.%Y').date()
@@ -31,7 +29,6 @@ class Settings(object):
     def save(self):
         with open(self.settings_file_path, 'w') as settings_file:
             settings_file.write(json.dumps({
-                'chat_name': self.chat_name if self.chat_name else None,
                 'prefix': self.prefix if self.prefix else None,
                 'keywords': self.keywords,
                 'date_from': self.date_from.strftime('%d.%m.%Y') if self.date_from else None,
@@ -42,22 +39,12 @@ class Settings(object):
     @property
     def as_string_list(self):
         return [
-            self.chat_name if self.chat_name else "",
             self.prefix if self.prefix else "",
             ', '.join(self.keywords) if self.keywords else "",
             self.date_from.strftime('%d.%m.%Y') if self.date_from else "",
             self.date_to.strftime('%d.%m.%Y') if self.date_to else "",
             self.encoding if self.encoding else "",
         ]
-
-    @property
-    def chat_name(self):
-        return self._chat_name
-
-    @chat_name.setter
-    def chat_name(self, value: str):
-        self._chat_name = value
-        self.save()
 
     @property
     def prefix(self):
@@ -108,8 +95,6 @@ class Settings(object):
 
 
 class InputSettings(object):
-    chat_name_num = 1
-    chat_name_label = 'Название Чата: '
     prefix_num = 2
     prefix_label = 'Префикс: '
     keywords_num = 3
@@ -127,22 +112,14 @@ class InputSettings(object):
     def print_settings(self):
         print("")
         annotations = zip(
-            (self.chat_name_num, self.prefix_num, self.keywords_num,
+            (self.prefix_num, self.keywords_num,
              self.date_from_num, self.date_to_num, self.encoding_num),
-            (self.chat_name_label, self.prefix_label, self.keywords_label,
+            (self.prefix_label, self.keywords_label,
              self.date_from_label, self.date_to_label, self.encoding_label),
             self.settings.as_string_list,
         )
         for i, label, setting in annotations:
             print ('{0}) {1} {2} '.format(i, label, setting))
-
-    def input_chat_name(self):
-        chat_name = input(self.chat_name_label).strip()
-        if chat_name in (None, ""):
-            print('Поле не должно быть пустым ')
-            self.input_chat_name()
-
-        self.settings.chat_name = chat_name
 
     def input_prefix(self):
         prefix = input(self.prefix_label).strip()
@@ -202,8 +179,7 @@ class InputSettings(object):
         value = input()
 
         if value == "":
-            if not all((self.settings.chat_name,
-                        self.settings.prefix,
+            if not all((self.settings.prefix,
                         self.settings.keywords,
                         self.settings.date_from,
                         self.settings.date_to)):
@@ -212,8 +188,6 @@ class InputSettings(object):
             return
         elif value == "list":
             self.print_settings()
-        elif value == '1':
-            self.input_chat_name()
         elif value == '2':
             self.input_prefix()
         elif value == '3':

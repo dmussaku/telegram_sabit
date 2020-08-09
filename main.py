@@ -26,7 +26,6 @@ if __name__ == '__main__':
             input_settings.input_setting()
             telegram_parser = TelegramParser(telegram_filepath)
             accumulated_statistics = telegram_parser.get_accumulated_statistics(
-                input_settings.settings.chat_name,
                 input_settings.settings.prefix,
                 input_settings.settings.keywords,
                 input_settings.settings.date_from,
