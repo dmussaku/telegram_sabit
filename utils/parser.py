@@ -2,6 +2,7 @@ import csv
 import json
 import os
 from datetime import datetime
+import traceback
 
 
 def is_a_user_text_message(obj):
@@ -51,6 +52,8 @@ class TelegramParser(object):
             message_text = message_text[0]
         else:
             message_text = ""
+        if type(message_text) != str:
+            raise AttributeError(f'{message_text} is not a string. Cant use lower method on it')
 
         return message_text.lower().strip()
 
