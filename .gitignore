@@ -133,3 +133,5 @@ settings.json
 statistics.csv
 
 .idea/
+tmp_test.py
+

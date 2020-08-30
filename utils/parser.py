@@ -58,7 +58,8 @@ class TelegramParser(object):
         try:
             return message_text.lower().strip()
         except Exception as err:
-            logging.exception(f'\nError occurred with argument: {message_text}')
+            logging.exception('\nError occurred with argument: {}'.format(message_struct))
+            raise
 
     @classmethod
     def get_message_statistics(cls, messages: list, keywords: list, prefix: str):
