@@ -2,10 +2,6 @@ import csv
 import json
 import os
 from datetime import datetime
-import logging
-
-
-logging.basicConfig(filename='..\error.log', filemode='a', format='%(asctime)s - %(message)s')
 
 
 def is_a_user_text_message(obj):
@@ -55,11 +51,8 @@ class TelegramParser(object):
             message_text = message_text[0]
         else:
             message_text = ""
-        try:
-            return message_text.lower().strip()
-        except Exception as err:
-            logging.exception('\nError occurred with argument: {}'.format(message_struct))
-            raise
+
+        return message_text.lower().strip()
 
     @classmethod
     def get_message_statistics(cls, messages: list, keywords: list, prefix: str):
