@@ -1,4 +1,3 @@
-import os
 from utils.parser import TelegramParser
 import pytest
 
